@@ -32,12 +32,13 @@ func inSet(c complex128, maxIters int) (inSet bool, iters int) {
 	for iters = 0; iters < maxIters; iters++ {
 		// Here is the magic!
 		z = z*z + c
-		// Break if our number exceeds escape conditions
-		if cmplx.Abs(z) > 60 {
+		// abs(z) > 2 is always unbounded, so escape
+		if cmplx.Abs(z) > 2 {
 			inSet = false
 			return
 		}
 	}
+	// If we got here, c is probably in the mandlebrot set
 	inSet = true
 	return
 }
@@ -57,8 +58,8 @@ func main() {
 	for x := 0; x < bounds.Max.X; x++ {
 		for y := 0; y < bounds.Max.Y; y++ {
 			// Generate our complex number, using offsets and scaling (zoom)
-			c := complex(float64(x)/(float64(bounds.Max.X)/zoom)-offsetX,
-				float64(y)/(float64(bounds.Max.Y)/zoom)-offsetY)
+			c := complex(float64(x)/(float64(bounds.Max.X)/zoom)-offsetX, // real (x)
+				float64(y)/(float64(bounds.Max.Y)/zoom)-offsetY) // imag (y)
 
 			_, iters := inSet(c, maxIters)
 			f := float64(iters) / float64(maxIters)
